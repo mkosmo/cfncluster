@@ -1,9 +1,9 @@
 # Copyright 2013-2014 Amazon.com, Inc. or its affiliates. All Rights Reserved.
 #
-# Licensed under the Amazon Software License (the "License"). You may not use this file except in compliance with the
+# Licensed under the Apache License, Version 2.0 (the "License"). You may not use this file except in compliance with the
 # License. A copy of the License is located at
 #
-# http://aws.amazon.com/asl/
+# http://aws.amazon.com/apache2.0/
 #
 # or in the "LICENSE.txt" file accompanying this file. This file is distributed on an "AS IS" BASIS, WITHOUT WARRANTIES
 # OR CONDITIONS OF ANY KIND, express or implied. See the License for the specific language governing permissions and
@@ -154,14 +154,11 @@ class CfnClusterConfig:
                     config_sanity.check_resource(self.region,self.aws_access_key_id, self.aws_secret_access_key,
                                              'URL', self.template_url)
             except ConfigParser.NoOptionError:
-                if self.region == 'eu-central-1':
-                    self.template_url = ('https://s3.%s.amazonaws.com/cfncluster-%s/templates/cfncluster-%s.cfn.json'
-                                         % (self.region, self.region, self.version))
-                elif self.region == 'us-gov-west-1':
+                if self.region == 'us-gov-west-1':
                     self.template_url = ('https://s3-%s.amazonaws.com/cfncluster-%s/templates/cfncluster-%s.cfn.json'
                                          % (self.region, self.region, self.version))
                 else:
-                    self.template_url = ('https://s3.amazonaws.com/cfncluster-%s/templates/cfncluster-%s.cfn.json'
+                    self.template_url = ('https://s3.amazonaws.com/%s-cfncluster/templates/cfncluster-%s.cfn.json'
                                          % (self.region, self.version))
         except AttributeError:
             pass
@@ -209,7 +206,9 @@ class CfnClusterConfig:
                                       cwl_log_group=('CWLLogGroup',None),shared_dir=('SharedDir',None),tenancy=('Tenancy',None),
                                       ephemeral_kms_key_id=('EphemeralKMSKeyId',None), cluster_ready=('ClusterReadyScript','URL'),
                                       master_root_volume_size=('MasterRootVolumeSize',None),compute_root_volume_size=('ComputeRootVolumeSize',None),
-                                      base_os=('BaseOS',None),ec2_iam_role=('EC2IAMRoleName',None),extra_json=('ExtraJson',None)
+                                      base_os=('BaseOS',None),ec2_iam_role=('EC2IAMRoleName',None),extra_json=('ExtraJson',None),
+                                      custom_chef_cookbook=('CustomChefCookbook',None),custom_chef_runlist=('CustomChefRunList',None),
+                                      additional_cfn_template=('AdditionalCfnTemplate',None)
                                       )
 
         # Loop over all the cluster options and add define to parameters, raise Exception if defined but null
@@ -226,6 +225,21 @@ class CfnClusterConfig:
                 self.parameters.append((self.__cluster_options.get(key)[0],__temp__))
             except ConfigParser.NoOptionError:
                 pass
+
+        # Merge tags from config with tags from command line args
+        # Command line args take precedent and overwite tags supplied in the config
+        self.tags = {}
+        try:
+            tags = __config.get(self.__cluster_section, 'tags')
+            self.tags = json.loads(tags);
+        except ConfigParser.NoOptionError:
+            pass
+        try:
+            if args.tags is not None:
+                for key in args.tags:
+                    self.tags[key] = args.tags[key]
+        except AttributeError:
+            pass
 
         # Determine if EBS settings are defined and set section
         try:

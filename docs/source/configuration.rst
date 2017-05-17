@@ -133,7 +133,7 @@ Defaults to false for the default template. ::
 
 scheduler
 """""""""
-Scheduler to be used with the cluster.  Valid options are sge, openlava, or torque.
+Scheduler to be used with the cluster.  Valid options are sge, openlava, torque, or slurm.
 
 Defaults to sge for the default template. ::
 
@@ -149,7 +149,7 @@ Defaults to ondemand for the default template. ::
 
 spot_price
 """""""""""
-If cluster_type is set to spot, the maximum spot price for the ComputeFleet. ::
+If cluster_type is set to spot, the maximum spot price for the ComputeFleet. See the `Spot Bid Advisor <https://aws.amazon.com/ec2/spot/bid-advisor/>`_ for assistance finding a bid price that meets your needs::
 
     spot_price = 0.00
 
@@ -157,13 +157,15 @@ If cluster_type is set to spot, the maximum spot price for the ComputeFleet. ::
 
 custom_ami
 """"""""""
-ID of a Custom AMI, to use instead of default published AMI's. ::
+ID of a Custom AMI, to use instead of default `published AMI's <https://github.com/awslabs/cfncluster/blob/master/amis.txt>`_. ::
 
     custom_ami = NONE
 
 s3_read_resource
 """"""""""""""""
-Specify S3 resource which cfncluster nodes will be granted read-only access
+Specify S3 resource for which cfncluster nodes will be granted read-only access
+
+For example, 'arn:aws:s3:::my_corporate_bucket/\*' would provide read-only access to all objects in the my_corporate_bucket bucket.
 
 See :doc:`working with S3 <s3_resources>` for details on format.
 
@@ -173,7 +175,9 @@ Defaults to NONE for the default template. ::
 
 s3_read_write_resource
 """"""""""""""""""""""
-Specify S3 resource which cfncluster nodes will be granted read-write access
+Specify S3 resource for which cfncluster nodes will be granted read-write access
+
+For example, 'arn:aws:s3:::my_corporate_bucket/Development/\*' would provide read-write access to all objects in the Development folder of the my_corporate_bucket bucket.
 
 See :doc:`working with S3 <s3_resources>` for details on format.
 
@@ -229,7 +233,7 @@ placement_group
 """""""""""""""
 Cluster placement group. The can be one of three values: NONE, DYNAMIC and an existing placement group name. When DYNAMIC is set, a unique placement group will be created as part of the cluster and deleted when the cluster is deleted. 
  
-Defaults to NONE for the default template. ::
+Defaults to NONE for the default template. More information on placement groups can be found `here <http://docs.aws.amazon.com/AWSEC2/latest/UserGuide/placement-groups.html>`_::
 
     placement_group = NONE
 
@@ -253,13 +257,13 @@ shared_dir
 """"""""""
 Path/mountpoint for shared EBS volume
  
-Defaults to /shared in the default template. ::
+Defaults to /shared in the default template. See :ref:`EBS Section <ebs_section>` for details on working with EBS volumes::
 
     shared_dir = /shared
 
 encrypted_ephemeral
 """""""""""""""""""
-Encrypted ephemeral drives. In-memory keys, non-recoverable.
+Encrypted ephemeral drives. In-memory keys, non-recoverable. If true, CfnCluster will generate an ephemeral encryption key in memroy and using LUKS encryption, encrypt your instance store volumes. 
  
 Defaults to false in default template. ::
 
@@ -285,7 +289,13 @@ base_os
 """""""
 OS type used in the cluster
  
-Defaults to alinux in the default template. ::
+Defaults to alinux in the default template. Available options are: alinux, centos6, centos7, ubuntu1404
+
+Note: The base_os determines the username used to log into the cluster.  
+
+* Centos 6 & 7: ``centos``
+* Ubuntu: ``ubuntu``
+* Amazon Linux: ``ec2-user`` ::
 
     base_os = alinux
 
@@ -321,6 +331,17 @@ Defaults to {} in the default template. ::
 
     extra_json = {}
 
+additional_cfn_template
+"""""""""""""""""""""""
+An additional CloudFormation template to launch along with the cluster. This allows you to create resources that exist outside of the cluster but are part of the cluster's lifecycle.
+
+Must be a HTTP URL to a public template with all parameters provided.
+
+Defaults to NONE in the default template. ::
+
+    additional_cfn_template = NONE
+
+
 vpc_settings
 """"""""""""
 Settings section relating to VPC to be used
@@ -344,6 +365,20 @@ Settings section relation to scaling
 See :ref:`Scaling Section <scaling_section>`. ::
 
     scaling_settings = custom
+
+tags
+""""
+Defines tags to be used in CloudFormation.
+
+If command line tags are specified via `--tags`, they get merged with config tags.
+
+Command line tags overwrite config tags that have the same key.
+
+Tags are JSON formatted and should not have quotes outside the curly braces.
+
+See `AWS CloudFormation Resource Tags Type <https://docs.aws.amazon.com/AWSCloudFormation/latest/UserGuide/aws-properties-resource-tags.html>`_. ::
+
+    tags = {"key": "value", "key2", "value2"}
 
 .. _vpc_section:
 

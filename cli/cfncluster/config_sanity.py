@@ -1,9 +1,9 @@
 # Copyright 2013-2014 Amazon.com, Inc. or its affiliates. All Rights Reserved.
 #
-# Licensed under the Amazon Software License (the "License"). You may not use this file except in compliance with the
+# Licensed under the Apache License, Version 2.0 (the "License"). You may not use this file except in compliance with the
 # License. A copy of the License is located at
 #
-# http://aws.amazon.com/asl/
+# http://aws.amazon.com/apache2.0/
 #
 # or in the "LICENSE.txt" file accompanying this file. This file is distributed on an "AS IS" BASIS, WITHOUT WARRANTIES
 # OR CONDITIONS OF ANY KIND, express or implied. See the License for the specific language governing permissions and
@@ -75,13 +75,16 @@ def check_resource(region, aws_access_key_id, aws_secret_access_key, resource_ty
             sys.exit(1)
     # EC2 Placement Group
     elif resource_type == 'EC2PlacementGroup':
-        try:
-            ec2_conn = boto.ec2.connect_to_region(region,aws_access_key_id=aws_access_key_id,
-                                                 aws_secret_access_key=aws_secret_access_key)
-            test = ec2_conn.get_all_placement_groups(groupnames=resource_value)
-        except boto.exception.BotoServerError as e:
-            print('Config sanity error: %s' % e.message)
-            sys.exit(1)
+        if resource_value == 'DYNAMIC':
+            pass
+        else:
+            try:
+                ec2_conn = boto.ec2.connect_to_region(region,aws_access_key_id=aws_access_key_id,
+                                                     aws_secret_access_key=aws_secret_access_key)
+                test = ec2_conn.get_all_placement_groups(groupnames=resource_value)
+            except boto.exception.BotoServerError as e:
+                print('Config sanity error: %s' % e.message)
+                sys.exit(1)
     # URL
     elif resource_type == 'URL':
         scheme = urlparse(resource_value).scheme

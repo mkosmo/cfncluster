@@ -2,6 +2,36 @@
 CHANGELOG
 =========
 
+1.3.1
+=====
+* feature:``ami``: Added support for Ubuntu 16.04 LTS
+* feature:``ami``: Added NVIDIA 361.42 driver
+* feature:``ami``: Added CUDA 7.5
+* feature:``cfncluster``: Added support for tags in cluster section in the config
+* feature:``cfncluster``: Added support for stopping/starting a cluster
+* bugfix:``cfncluster``: Setting DYNAMIC for placement group sanity check fixed
+* bugfix:``cfncluster``: Support any type of script for pre/post install
+* updates:``cfncluster-cookbook``: Updated to cfncluster-cookbook-1.3.0
+* updates:``cfncluster``: Updated docs with more detailed CLI help
+* updates:``cfncluster``: Updated docs with development environment setup
+* updates:``ami``: Updated to Openlava 3.3.3
+* updates:``ami``: Updated to Slurm 16-05-3-1
+* updates:``ami``: Updated to Chef 12.13.30
+* updates:``ami``: Update all base AMIs to latest patch levels
+
+1.2.1
+=====
+* bugfix:``cfncluster-node``: Use strings in command for sqswatcher on Python 2.6
+* updates:``ami``: Update all base AMIs to latest patch levels
+
+1.2.0
+=====
+* bugfix:``cfncluster-node``: Correctly set slots per host for Openlava
+* updates:``cfncluster-cookbook``: Updated to cfncluster-cookbook-1.2.0
+* updates:``ami``: Updated to SGE 8.1.9
+* updates:``ami``: Updated to Openlava 3.1.3
+* updates:``ami``: Updated to Chef 12.8.1
+
 1.1.0
 =====
 * feature:``cfncluster``: Support for dynamic placement groups

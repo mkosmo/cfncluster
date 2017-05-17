@@ -1,9 +1,9 @@
 # Copyright 2013-2014 Amazon.com, Inc. or its affiliates. All Rights Reserved.
 #
-# Licensed under the Amazon Software License (the "License"). You may not use this file except in compliance with the
+# Licensed under the Apache License, Version 2.0 (the "License"). You may not use this file except in compliance with the
 # License. A copy of the License is located at
 #
-# http://aws.amazon.com/asl/
+# http://aws.amazon.com/apache2.0/
 #
 # or in the "LICENSE.txt" file accompanying this file. This file is distributed on an "AS IS" BASIS, WITHOUT WARRANTIES
 # OR CONDITIONS OF ANY KIND, express or implied. See the License for the specific language governing permissions and
@@ -41,6 +41,12 @@ def update(args):
 
 def version(args):
     cfncluster.version(args)
+
+def start(args):
+    cfncluster.start(args)
+
+def stop(args):
+    cfncluster.stop(args)
 
 def main():
     # set up logging to file
@@ -111,6 +117,18 @@ def main():
     pdelete.add_argument("cluster_name", type=str, default=None,
                         help='delete a cfncluster with the provided name.')
     pdelete.set_defaults(func=delete)
+
+    pstart = subparsers.add_parser('start', help='start a cluster that has been stopped')
+    pstart.add_argument("cluster_name", type=str, default=None,
+                        help='start a cfncluster with the provided name.')
+    pstart.add_argument("--reset-desired", "-rd", action='store_true', dest="reset_desired", default=False,
+                         help='Set the ASG desired capacity to initial config values. Note this could cause a race condition. If the MasterServer boots after the ASG scales it will cause an error.')
+    pstart.set_defaults(func=start)
+
+    pstop = subparsers.add_parser('stop', help='stop a cluster that has been created')
+    pstop.add_argument("cluster_name", type=str, default=None,
+                        help='stop a cfncluster with the provided name.')
+    pstop.set_defaults(func=stop)
 
     pstatus = subparsers.add_parser('status', help='pull the current status of the cluster')
     pstatus.add_argument("cluster_name", type=str, default=None,

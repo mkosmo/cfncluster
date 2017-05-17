@@ -1,9 +1,9 @@
 # Copyright 2013-2016 Amazon.com, Inc. or its affiliates. All Rights Reserved.
 #
-# Licensed under the Amazon Software License (the "License"). You may not use this file except in compliance with the
+# Licensed under the Apache License, Version 2.0 (the "License"). You may not use this file except in compliance with the
 # License. A copy of the License is located at
 #
-# http://aws.amazon.com/asl/
+# http://aws.amazon.com/apache2.0/
 #
 # or in the "LICENSE.txt" file accompanying this file. This file is distributed on an "AS IS" BASIS, WITHOUT WARRANTIES
 # OR CONDITIONS OF ANY KIND, express or implied. See the License for the specific language governing permissions and
@@ -20,13 +20,13 @@ def read(fname):
     return open(os.path.join(os.path.dirname(__file__), fname)).read()
 
 console_scripts = ['cfncluster = cfncluster.cli:main']
-version = "1.1.0"
-requires = ['boto>=2.39'] 
+version = "1.3.1"
+requires = ['boto>=2.42.0', 'awscli>=1.10.56'] 
 
 if sys.version_info[:2] == (2, 6):
     # For python2.6 we have to require argparse since it
     # was not in stdlib until 2.7.
-    requires.append('argparse>=1.1')
+    requires.append('argparse>=1.4.0')
 
 setup(
     name = "cfncluster",
@@ -35,7 +35,7 @@ setup(
     author_email = "dougalb@amazon.com",
     description = ("A simple tool to launch and manage HPC clusters as CloudFormation stacks."),
     url = ("https://github.com/awslabs/cfncluster"),
-    license = "Amazon Software License",
+    license = "Apache License 2.0",
     packages = find_packages(),
     install_requires = requires,
     entry_points=dict(console_scripts=console_scripts),
@@ -50,6 +50,6 @@ setup(
         "Environment :: Console",
         "Programming Language :: Python",
         "Topic :: Scientific/Engineering",
-        "License :: Other/Proprietary License",
+        "License :: Apache Software License",
     ],
 )
