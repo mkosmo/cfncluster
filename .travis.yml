@@ -1,21 +1,33 @@
 language: python
+sudo: required
+dist: xenial
 
 python:
-  - "2.6"
   - "2.7"
-  - "3.3"
   - "3.4"
   - "3.5"
+  - "3.6"
+  - "3.7"
 
-install: 
-  - cd cli
-  - if [[ $TRAVIS_PYTHON_VERSION == 2.6 ]]; 
-    then pip install -r requirements26.txt; 
-    else pip install -r requirements.txt;
-    fi
-  - pip install -e .
-  - cd -
+matrix:
+  include:
+  - name: Code Checks
+    python: 3.6
+    stage: linters
+    env: TOXENV=code-linters
+  - name: CloudFormation Templates Checks
+    python: 3.6
+    stage: linters
+    env: TOXENV=cfn-format-check,cfn-lint
+  - name: Docs Checks
+    python: 3.6
+    stage: linters
+    env: TOXENV=docs-linters
+    before_install:
+      # Needed to run docs-linters target in tox.
+      - sudo apt-get update && sudo apt-get install -y enchant
 
-sudo: false
+install:
+  - pip install tox-travis
 
-script: sh tests/test.sh
+script: cd cli && tox

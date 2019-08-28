@@ -1,7 +1,7 @@
 # Copyright 2013-2016 Amazon.com, Inc. or its affiliates. All Rights Reserved.
 #
-# Licensed under the Apache License, Version 2.0 (the "License"). You may not use this file except in compliance with the
-# License. A copy of the License is located at
+# Licensed under the Apache License, Version 2.0 (the "License"). You may not use this file except in compliance
+# with the License. A copy of the License is located at
 #
 # http://aws.amazon.com/apache2.0/
 #
@@ -9,47 +9,60 @@
 # OR CONDITIONS OF ANY KIND, express or implied. See the License for the specific language governing permissions and
 # limitations under the License.
 
-import os, sys
-from setuptools import setup, find_packages
+import os
+import sys
 
-# Utility function to read the README file.
-# Used for the long_description.  It's nice, because now 1) we have a top level
-# README file and 2) it's easier to type in the README file than to put a raw
-# string in below ...
-def read(fname):
-    return open(os.path.join(os.path.dirname(__file__), fname)).read()
+from setuptools import find_packages, setup
 
-console_scripts = ['cfncluster = cfncluster.cli:main']
-version = "1.3.1"
-requires = ['boto>=2.42.0', 'awscli>=1.10.56'] 
+
+def readme():
+    """Read the README file and use it as long description."""
+    with open(os.path.join(os.path.dirname(__file__), "README")) as f:
+        return f.read()
+
+
+VERSION = "2.4.1"
+REQUIRES = ["boto3>=1.9.54", "future>=0.16.0,<=0.17.1", "tabulate>=0.8.2,<=0.8.3"]
 
 if sys.version_info[:2] == (2, 6):
     # For python2.6 we have to require argparse since it
     # was not in stdlib until 2.7.
-    requires.append('argparse>=1.4.0')
+    REQUIRES.append("argparse==1.4.0")
+
+if sys.version_info[0] == 2:
+    REQUIRES.append("configparser>=3.5.0,<=3.5.3")
 
 setup(
-    name = "cfncluster",
-    version = version,
-    author = "Dougal Ballantyne",
-    author_email = "dougalb@amazon.com",
-    description = ("A simple tool to launch and manage HPC clusters as CloudFormation stacks."),
-    url = ("https://github.com/awslabs/cfncluster"),
-    license = "Apache License 2.0",
-    packages = find_packages(),
-    install_requires = requires,
-    entry_points=dict(console_scripts=console_scripts),
-    include_package_data = True,
-    zip_safe = False,
-    package_data = {
-        '' : ['examples/config'],
+    name="aws-parallelcluster",
+    version=VERSION,
+    author="Amazon Web Services",
+    description="AWS ParallelCluster is an AWS supported Open Source cluster management tool to deploy "
+    "and manage HPC clusters in the AWS cloud.",
+    url="https://github.com/aws/aws-parallelcluster",
+    license="Apache License 2.0",
+    packages=find_packages(),
+    python_requires=">=2.7",
+    install_requires=REQUIRES,
+    entry_points={
+        "console_scripts": [
+            "pcluster = pcluster.cli:main",
+            "awsbqueues = awsbatch.awsbqueues:main",
+            "awsbhosts = awsbatch.awsbhosts:main",
+            "awsbstat = awsbatch.awsbstat:main",
+            "awsbkill = awsbatch.awsbkill:main",
+            "awsbsub = awsbatch.awsbsub:main",
+            "awsbout = awsbatch.awsbout:main",
+        ]
     },
-    long_description=read('README'),
+    include_package_data=True,
+    zip_safe=False,
+    package_data={"": ["examples/config"]},
+    long_description=readme(),
     classifiers=[
         "Development Status :: 5 - Production/Stable",
         "Environment :: Console",
         "Programming Language :: Python",
         "Topic :: Scientific/Engineering",
-        "License :: Apache Software License",
+        "License :: OSI Approved :: Apache Software License",
     ],
 )

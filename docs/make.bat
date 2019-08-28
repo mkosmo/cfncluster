@@ -6,8 +6,8 @@ if "%SPHINXBUILD%" == "" (
 	set SPHINXBUILD=sphinx-build
 )
 set BUILDDIR=build
-set ALLSPHINXOPTS=-d %BUILDDIR%/doctrees %SPHINXOPTS% source
-set I18NSPHINXOPTS=%SPHINXOPTS% source
+set ALLSPHINXOPTS=-d %BUILDDIR%/doctrees %SPHINXOPTS% .
+set I18NSPHINXOPTS=%SPHINXOPTS% .
 if NOT "%PAPER%" == "" (
 	set ALLSPHINXOPTS=-D latex_paper_size=%PAPER% %ALLSPHINXOPTS%
 	set I18NSPHINXOPTS=-D latex_paper_size=%PAPER% %I18NSPHINXOPTS%
@@ -37,6 +37,8 @@ if "%1" == "help" (
 	echo.  pseudoxml  to make pseudoxml-XML files for display purposes
 	echo.  linkcheck  to check all external links for integrity
 	echo.  doctest    to run all doctests embedded in the documentation if enabled
+	echo.  spelling   to check for typos in documentation
+	echo.  livehtml   to rebuild docs when a change is detected
 	goto end
 )
 
@@ -115,9 +117,9 @@ if "%1" == "qthelp" (
 	echo.
 	echo.Build finished; now you can run "qcollectiongenerator" with the ^
 .qhcp project file in %BUILDDIR%/qthelp, like this:
-	echo.^> qcollectiongenerator %BUILDDIR%\qthelp\cfncluster.qhcp
+	echo.^> qcollectiongenerator %BUILDDIR%\qthelp\aws-parallelcluster.qhcp
 	echo.To view the help file:
-	echo.^> assistant -collectionFile %BUILDDIR%\qthelp\cfncluster.ghc
+	echo.^> assistant -collectionFile %BUILDDIR%\qthelp\aws-parallelcluster.ghc
 	goto end
 )
 
@@ -236,6 +238,22 @@ if "%1" == "pseudoxml" (
 	if errorlevel 1 exit /b 1
 	echo.
 	echo.Build finished. The pseudo-XML files are in %BUILDDIR%/pseudoxml.
+	goto end
+)
+
+if "%1" == "spelling" (
+	%SPHINXBUILD% -b spelling %ALLSPHINXOPTS% %BUILDDIR%/spelling
+	if errorlevel 1 exit /b 1
+	echo.
+	echo.Check finished. Wrong words can be found in %BUILDDIR%/spelling/output.txt.
+	goto end
+)
+
+if "%1" == "livehtml" (
+	sphinx-autobuild -b html %ALLSPHINXOPTS% %BUILDDIR%/html
+	if errorlevel 1 exit /b 1
+	echo.
+	echo.Build finished. Auto-reloading enabled.
 	goto end
 )
 

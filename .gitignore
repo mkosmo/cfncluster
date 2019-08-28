@@ -8,3 +8,9 @@ build/
 *.egg-info/
 .idea/
 .DS_Store
+.tox/
+*.iml
+.coverage
+assets/
+report.html
+tests_outputs/

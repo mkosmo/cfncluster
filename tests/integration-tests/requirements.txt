@@ -1,0 +1,17 @@
+argparse
+assertpy
+aws-parallelcluster
+boto3
+fabric
+jinja2
+junitparser
+pytest
+pytest-datadir
+pytest-html
+pytest-rerunfailures
+pytest-sugar
+pytest-xdist
+retrying
+troposphere
+untangle
+wrapt_timeout_decorator
